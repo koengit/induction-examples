@@ -2,7 +2,6 @@
 module Propositional where
 
 import Test.QuickCheck
-import Test.QuickCheck.Poly
 import Test.QuickCheck.All
 import Control.Monad ( liftM, liftM2 )
 import Data.List ( insert )
@@ -33,12 +32,12 @@ models (Not (Not p)) m =
   models p m
 
 models (Var x) m =
-  [ (x,True) `insert` m 
+  [ (x,True) : filter ((x/=).fst) m 
   | (x,False) `notElem` m
   ]
 
 models (Not (Var x)) m =
-  [ (x,False) `insert` m 
+  [ (x,False) : filter ((x/=).fst) m
   | (x,True) `notElem` m
   ]
 
@@ -57,6 +56,13 @@ prop_AndImplication p q =
   valid (p :&: q) ==> valid q
 
 --------------------------------------------------------------------------------
+
+okay :: Val -> Bool
+okay []        = True
+okay ((x,b):m) = x `notElem` map fst m && okay m
+
+prop_Okay p =
+  all okay (models p [])
 
 (|=) :: Val -> Form -> Bool
 m |= Var x     = (x,True) `elem` m
