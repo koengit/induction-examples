@@ -27,6 +27,11 @@ flatten2 :: Tree a -> [a] -> [a]
 flatten2 Nil          ys = ys
 flatten2 (Node p x q) ys = flatten2 p (x : flatten2 q ys)
 
+flatten3 :: Tree a -> [a]
+flatten3 Nil                     = []
+flatten3 (Node (Node p x q) y r) = flatten3 (Node p x (Node q y r))
+flatten3 (Node Nil x q)          = x : flatten3 q
+
 --------------------------------------------------------------------------------
 
 prop_Flatten1 (p :: Tree A) =
@@ -34,6 +39,9 @@ prop_Flatten1 (p :: Tree A) =
 
 prop_Flatten2 (p :: Tree A) =
   flatten2 p [] == flatten0 p
+
+prop_Flatten3 (p :: Tree A) =
+  flatten3 p == flatten0 p
 
 --------------------------------------------------------------------------------
 
