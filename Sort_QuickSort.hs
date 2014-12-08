@@ -1,5 +1,5 @@
 {-# LANGUAGE ScopedTypeVariables, TemplateHaskell #-}
-module Sort_InsertionSort where
+module Sort_QuickSort where
 
 import Test.QuickCheck
 import Test.QuickCheck.Poly
@@ -8,14 +8,9 @@ import Data.List( sort, delete )
 
 --------------------------------------------------------------------------------
 
-isort :: Ord a => [a] -> [a]
-isort []     = []
-isort (x:xs) = insert x (isort xs)
-
-insert :: Ord a => a -> [a] -> [a]
-insert x []                 = [x]
-insert x (y:xs) | x <= y    = x : y : xs
-                | otherwise = y : insert x xs
+qsort :: Ord a => [a] -> [a]
+qsort []     = []
+qsort (x:xs) = qsort (filter (<=x) xs) ++ [x] ++ qsort (filter (>x) xs)
 
 --------------------------------------------------------------------------------
 
@@ -36,16 +31,16 @@ isPermutation :: Eq a => [a] -> [a] -> Bool
 --------------------------------------------------------------------------------
 
 prop_SortSorts (xs :: [OrdA]) =
-  ordered (isort xs)
+  ordered (qsort xs)
 
 prop_SortPermutes x (xs :: [OrdA]) =
-  count x (isort xs) == count x xs
+  count x (qsort xs) == count x xs
 
 prop_SortPermutes' (xs :: [OrdA]) =
-  isort xs `isPermutation` xs
+  qsort xs `isPermutation` xs
 
 prop_SortIsSort (xs :: [OrdA]) =
-  isort xs == sort xs
+  qsort xs == sort xs
 
 --------------------------------------------------------------------------------
 
