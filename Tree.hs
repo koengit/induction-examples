@@ -37,6 +37,9 @@ flatten3 (Node Nil x q)          = x : flatten3 q
 prop_Flatten1 (p :: Tree A) =
   flatten1 [p] == flatten0 p
 
+prop_Flatten1List (ps :: [Tree A]) =
+  flatten1 ps == concatMap flatten0 ps
+
 prop_Flatten2 (p :: Tree A) =
   flatten2 p [] == flatten0 p
 
@@ -56,7 +59,8 @@ swap a b (Node p x q) = Node (swap a b p) x' (swap a b q)
 prop_SwapAB p a b =
   a `elem` flatten0 p &&
     b `elem` flatten0 p ==>
-      a `elem` flatten0 (swap a b p)
+      a `elem` flatten0 (swap a b p) &&
+        b `elem` flatten0 (swap a b p)
 
 --------------------------------------------------------------------------------
 
