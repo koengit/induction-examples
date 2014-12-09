@@ -94,6 +94,21 @@ prop_RecStar p s =
 
 --------------------------------------------------------------------------------
 
+deeps :: R a -> R a
+deeps Nil          = Nil
+deeps Eps          = Nil
+deeps (Atom a)     = Atom a
+deeps (p :+: q)    = deeps p :+: deeps q
+deeps (p :>: q)
+  | eps p && eps q = deeps p :+: deeps q
+  | otherwise      = p :>: q
+deeps (Star p)     = deeps p
+
+prop_Deeps p s =
+  rec (Star p) s == rec (Star (deeps p)) s
+
+--------------------------------------------------------------------------------
+
 instance Arbitrary a => Arbitrary (R a) where
   arbitrary = sized arbR
    where
